@@ -1,18 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="15dp"
+        android:gravity="center_horizontal"
+        android:text="Когда Вы курили в последний раз?"
+        android:textColor="@android:color/black"
+        android:textSize="12pt">
+    </TextView>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tl1"
+        android:layout_margin="10dp">
+        <TableRow
+            android:id="@+id/tr1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Дата"
+                android:textSize="10pt"
+                android:layout_weight="1">
+            </TextView>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Время"
+                android:textSize="10pt"
+                android:layout_weight="1"
+                android:layout_marginLeft="15dp">
+            </TextView>
+        </TableRow>
+        <TableRow
+            android:id="@+id/tr2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="35dp">
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:textColor="@android:color/black"
+                android:layout_weight="1"
+                android:textSize="10pt"
+                android:text="01.01.2020">
+            </TextView>
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:textColor="@android:color/black"
+                android:layout_weight="1"
+                android:layout_marginLeft="15dp"
+                android:textSize="10pt"
+                android:text="16:37">
+            </TextView>
+        </TableRow>
+    </TableLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Количество сигарет в день"
+        android:textSize="10pt"
+        android:layout_marginHorizontal="10dp">
+    </TextView>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etCigarettesPerDay"
+        android:textSize="10pt"
+        android:textColor="@android:color/black"
+        android:inputType="numberDecimal"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="25dp">
+    </EditText>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Средняя стоимость пачки (₽)"
+        android:textSize="10pt"
+        android:layout_marginHorizontal="10dp">
+    </TextView>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/etPackAverageCost"
+        android:textSize="10pt"
+        android:textColor="@android:color/black"
+        android:inputType="number"
+        android:layout_marginHorizontal="10dp">
+    </EditText>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnSubmit"
+        android:text="Подтвердить"
+        android:textColor="@android:color/black"
+        android:textSize="10pt"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="55dp">
+    </Button>
+</LinearLayout>

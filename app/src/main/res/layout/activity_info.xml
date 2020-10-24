@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="15dp"
+        android:gravity="center_horizontal"
+        android:text="Время с момента последней сигареты:"
+        android:textSize="12pt">
+    </TextView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvTimeSinceLastCigarette"
+        android:layout_marginHorizontal="10dp"
+        android:text="5 дней 17 часов 8 минут"
+        android:textSize="12pt"
+        android:textColor="@android:color/black"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="35dp">
+    </TextView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Количество невыкуренных сигарет:"
+        android:textSize="10pt"
+        android:layout_marginHorizontal="10dp">
+    </TextView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvNonSmokedCigarettesNum"
+        android:textSize="10pt"
+        android:textColor="@android:color/black"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="25dp"
+        android:text="25">
+    </TextView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Сэкономлено денег (₽):"
+        android:textSize="10pt"
+        android:layout_marginHorizontal="10dp">
+    </TextView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvSavedMoney"
+        android:textSize="10pt"
+        android:textColor="@android:color/black"
+        android:layout_marginHorizontal="10dp"
+        android:text="2436">
+    </TextView>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnReset"
+        android:text="Не сдержался"
+        android:textColor="@android:color/black"
+        android:textSize="10pt"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="55dp">
+    </Button>
+</LinearLayout>
