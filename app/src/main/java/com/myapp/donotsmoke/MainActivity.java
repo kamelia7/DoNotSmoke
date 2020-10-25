@@ -1,15 +1,21 @@
 package com.myapp.donotsmoke;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -22,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -31,24 +38,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText etPackAverageCost;
     Button btnSubmit;
 
-    //надо final, иначе в строке case DIALOG_DATE_ID: ошибка error: constant expression required
-    final int DIALOG_TIME_ID = 1;
-    final int DIALOG_DATE_ID = 2;
+    private static final String LOG_TAG = "myLogs";
 
-    private static final String TAG = "myLogs";
 
     //Выполняются эти строки, затем создастся TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener(),
     //затем DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
     //затем onCreate, затем всякие системные ф-и, loop() и наконец появляется активити на экране
-    //затем onClick, заходим в showDialog(DIALOG_DATE_ID); затем системные ф-и, системная ф-я onCreateDialog
-    // и наконец наша protected Dialog onCreateDialog(int id) {
-    //проходим ее, затем выходим из системной ф-и onCreateDialog, выходим из нашей showDialog(DIALOG_DATE_ID);
-    //и попадаем в break текущей ветки свича. Выходим из onClick.
-    // Затем всякие системные ф-и, loop и появляется диалоговое окно
+    //затем onClick, заходим в dpd.show(); затем в break текущей ветки свича, выходим из onClick
+    // Затем всякие системные ф-и, loop и появляется диалоговое окно.
+    //Выбираем дату в диалоге, вызывается onDateSet
 
-    // инициализировать тут (тогда выполнится до onCreate) или же в onCreate?
-    SimpleDateFormat sdfTime; // = new SimpleDateFormat("HH:mm");
-    SimpleDateFormat sdfDate; // = new SimpleDateFormat("dd.MM.yyyy");
+
+    // Добавляем параметр Locale.getDefault(), чтобы избавиться от warning
+    SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm", Locale.getDefault());
+    SimpleDateFormat sdfDate = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +64,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etPackAverageCost = findViewById(R.id.etPackAverageCost);
         btnSubmit = findViewById(R.id.btnSubmit);
 
-        sdfDate = new SimpleDateFormat("dd.MM.yyyy");
-        String currentDate = sdfDate.format(new Date(System.currentTimeMillis()));
+        //Allocates a Date object and initializes it so that it represents the time at which it was allocated, measured to the nearest millisecond.
+        // было sdfDate.format(new Date(System.currentTimeMillis())). new Date() уже сам с System.currentTimeMillis() по умолчанию
+        String currentDate = sdfDate.format(new Date());
         tvDate.setText(currentDate);
 
-        sdfTime = new SimpleDateFormat("HH:mm");
-        String currentTime = sdfTime.format(new Date(System.currentTimeMillis()));
+        String currentTime = sdfTime.format(new Date());
         tvTime.setText(currentTime);
 
         //btnSubmit.setEnabled(false);
@@ -77,17 +80,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        int CigarettesPerDay;
-        float PackAverageCost;
+        int dateTimeOfLastCigarette;
+        int cigarettesPerDay;
+        float packAverageCost;
+
+        // The Calendar returned is based on the current time in the default time zone with the default Locale.Category#FORMAT locale.
+        Calendar c = Calendar.getInstance();
+        // в календаре MONTH=9, хотя сейчас октябрь. Потому что в календаре месяцы считаются с 0 (янв.), в DatePickerDialog тоже
 
         switch (view.getId()) {
+
             case R.id.tvDate: //в xml указываем android:clickable="true"
-                showDialog(DIALOG_DATE_ID);
-                // нужен break. В showDialog(DIALOG_DATE_ID); вызывается protected Dialog onCreateDialog(int id),
-                // выходим из showDialog, затем break, выход из onClick и потом открывается диалоговое окно
+                DatePickerDialog dpd = new DatePickerDialog(MainActivity.this, onDateSetListener, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+                dpd.show();
+                //нужен break. dpd.show(); затем в break текущей ветки свича, выходим из onClick и потом открывается диалоговое окно
                 break;
             case R.id.tvTime: //в xml указываем android:clickable="true"
-                showDialog(DIALOG_TIME_ID);
+                TimePickerDialog tpd = new TimePickerDialog(MainActivity.this, onTimeSetListener, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true);
+                tpd.show();
                 break;
             case R.id.btnSubmit:
                 if (TextUtils.isEmpty(etCigarettesPerDay.getText().toString())
@@ -95,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Toast.makeText(this, "Введите необходимые данные", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                cigarettesPerDay = Integer.parseInt(etCigarettesPerDay.getText().toString());
+                packAverageCost = Float.parseFloat(etPackAverageCost.getText().toString());
+
                 Intent intent = new Intent(this, InfoActivity.class);
                 startActivity(intent);
                 break;
@@ -103,52 +116,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        Calendar c = Calendar.getInstance(); // The Calendar returned is based on the current time in the default time zone with the default Locale.Category#FORMAT locale.
-        // в календаре MONTH=9, хотя сейчас октябрь. Потому что в календаре месяцы считаются с 0 (янв.)
-        switch (id) {
-            case DIALOG_TIME_ID:
-                int currentHourOfDay = c.get(Calendar.HOUR_OF_DAY); //Field number for get and set indicating the hour of the day.
-                int currentMinute = c.get(Calendar.MINUTE);
-                return new TimePickerDialog(this, onTimeSetListener, currentHourOfDay, currentMinute, true);
-            case DIALOG_DATE_ID:
-                int currentYear = c.get(Calendar.YEAR); //2020
-                int currentMonth = c.get(Calendar.MONTH); // currentMonth=9, хотя сейчас октябрь. НЕ делаем тут +1 к месяцу, иначе в диалоге откроется не октябрь (текущий), а ноябрь
-                int currentDayOfMonth = c.get(Calendar.DAY_OF_MONTH); //24
-                return new DatePickerDialog(this, onDateSetListener, currentYear, currentMonth, currentDayOfMonth);
-            default:
-                return super.onCreateDialog(id); //? все ветки вроде как должны возвращать зн-е
-                //throw new IllegalStateException("Unexpected value: " + id); //? или просто вместо return поставить break
-        }
-    }
-
     TimePickerDialog.OnTimeSetListener onTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker timePicker, int hourOfDay, int minute) {
-            String chosenTime = hourOfDay + ":" + minute; //chosenTime = "1:5", а не "01:05"
-            try {
-                Date time = sdfTime.parse(chosenTime); //time = "Thu Jan 01 01:05:00 GMT+03:00 1970"
-                tvTime.setText(sdfTime.format(time)); // или вынести это за try?
-            } catch (ParseException e) {
-                e.printStackTrace(); //сюда не попадаем
-            }
+            //1$ -1й параметр, 0 в начале пишем, если одна цифра (одного нуля достаточно в любом случае). 2- две цифры всего. d-ожидаем целое число получить.
+            tvTime.setText(String.format(Locale.getDefault(), "%1$02d:%2$02d", hourOfDay, minute));
+            //String.format("%d", 1) - выведет просто "1"
+            //String.format("%1$d | %2$d | %3$d", 1, 2, 3) НОМЕР АРГУМЕНТА ЭТО %[1$]d, %[3$]s итд
         }
     };
 
     DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) { //2020 9 24
-            //chosenDate = 24.9.2020, если не написать month + 1, чтобы вывести на экран окт. как 10й месяц,
-            // но тогда chosenDate = 24.91.2020. Надо (month + 1) и будет "24.10.2020"
-            String chosenDate = dayOfMonth + "." + (month + 1) + "." + year;  //"dd.MM.yyyy"
-            try { // без try/catch была ошибка surround with try/catch
-                Date date = sdfDate.parse(chosenDate); // date = "Thu Oct 22 00:00:00 GMT+03:00 2020"
-                tvDate.setText(sdfDate.format(date));
-            } catch (ParseException e) {
-                e.printStackTrace();  //сюда не попадаем
-            }
+            //пишем month + 1, чтобы вывести на экран октябрь как 10й месяц, а не как 9й (т.к. у диалога счет месяцев идет с 0)
+            tvDate.setText(String.format(Locale.getDefault(), "%1$02d.%2$02d.%3$4d", dayOfMonth, month + 1, year)); //"dd.MM.yyyy"
         }
     };
 }
-//TODO сделать восстановление уже заданных в диалоге данных после закрытия приложения и повторного открытия
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

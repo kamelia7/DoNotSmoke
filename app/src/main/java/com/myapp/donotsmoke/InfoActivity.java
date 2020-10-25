@@ -33,9 +33,9 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        //finish(); //завершаем работу InfoActivity
         Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        //startActivityForResult(intent, 1);
+        startActivity(intent); //это создаст новое активити
 
 
     }

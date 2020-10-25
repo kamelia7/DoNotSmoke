@@ -100,7 +100,7 @@
         android:id="@+id/etPackAverageCost"
         android:textSize="10pt"
         android:textColor="@android:color/black"
-        android:inputType="number"
+        android:inputType="numberDecimal"
         android:layout_marginHorizontal="10dp">
     </EditText>
     <Button
