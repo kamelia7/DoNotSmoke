@@ -15,18 +15,18 @@
         android:text="Время с момента последней сигареты:"
         android:textSize="12pt">
     </TextView>
+
     <TextView
+        android:id="@+id/tvTimeSinceLastCigarette"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvTimeSinceLastCigarette"
         android:layout_marginHorizontal="10dp"
-        android:text="5 дней 17 часов 8 минут"
-        android:textSize="12pt"
-        android:textColor="@android:color/black"
-        android:gravity="center_horizontal"
         android:layout_marginTop="35dp"
-        android:layout_marginBottom="35dp">
-    </TextView>
+        android:layout_marginBottom="35dp"
+        android:gravity="center_horizontal"
+        android:text="0 день 0 часов 0 минут\n0 секунд"
+        android:textColor="@android:color/black"
+        android:textSize="12pt"></TextView>
 
     <TextView
         android:layout_width="match_parent"
@@ -38,12 +38,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tvNonSmokedCigarettesNum"
+        android:id="@+id/tvNonSmokedCigarettesAmount"
         android:textSize="10pt"
         android:textColor="@android:color/black"
         android:layout_marginHorizontal="10dp"
         android:layout_marginBottom="25dp"
-        android:text="25">
+        android:text="0">
     </TextView>
     <TextView
         android:layout_width="match_parent"
@@ -59,7 +59,7 @@
         android:textSize="10pt"
         android:textColor="@android:color/black"
         android:layout_marginHorizontal="10dp"
-        android:text="2436">
+        android:text="0">
     </TextView>
     <Button
         android:layout_width="wrap_content"
